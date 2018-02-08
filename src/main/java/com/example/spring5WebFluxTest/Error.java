@@ -4,8 +4,8 @@ import java.util.List;
 
 public class Error {
 
-    String code = "UNAUTHORIZED";
-    String message = "access to the requested resource is not authorized";
+    private String code = "UNAUTHORIZED";
+    private String message = "access to the requested resource is not authorized";
     private List<Scope> detail;
 
     public String getCode() {

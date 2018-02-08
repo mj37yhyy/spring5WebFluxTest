@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Scope {
 
-    String Type;
-    String Name;
-    String Action;
+    private String Type;
+    private String Name;
+    private String Action;
 
     @JsonProperty("Type")
     public String getType() {

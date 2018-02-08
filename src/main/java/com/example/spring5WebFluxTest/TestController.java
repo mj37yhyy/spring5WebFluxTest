@@ -26,7 +26,7 @@ public class TestController {
 			String service,
 			@RequestParam
 			String scope,
-			@RequestParam
+			@RequestParam(required = false)
 			String account) {
 		System.out.println("-------------------------------------------");
 
@@ -105,17 +105,17 @@ public class TestController {
 			});
 			return Mono.just(m);
 		}
-		Error error = new Error() {
-			{
-				setDetail(scopes);
-			}
-		};
+
 
 		HashMap m = new HashMap() {
 			{
 				put("errors", new ArrayList<Error>() {
 					{
-						add(error);
+						add(new Error() {
+                            {
+                                setDetail(scopes);
+                            }
+                        });
 					}
 				});
 			}
