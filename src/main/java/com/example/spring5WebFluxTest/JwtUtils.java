@@ -9,8 +9,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 public class JwtUtils {
 
@@ -25,8 +24,13 @@ public class JwtUtils {
         }
     }
 
-    public static String createJWT(String name, String userId, String role,
-                                   String audience, String issuer, long TTLMillis, String base64Security) {
+    public static String createJWT(String name,
+                                   String audience,
+                                   String issuer,
+                                   String jti,
+                                   List<Scope> scopes,
+                                   long TTLMillis,
+                                   String base64Security) {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
@@ -34,17 +38,15 @@ public class JwtUtils {
         //生成签名密钥 就是一个base64加密后的字符串？
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(base64Security);
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
-        JsonBinder jsonBinder = JsonBinder.buildNormalBinder(false);
-        Map map = new HashMap();
-        map.put("userName", name);
-        map.put("userLoginName", userId);
 
         //添加构成JWT的参数
         JwtBuilder builder = Jwts.builder().setHeaderParam("typ", "JWT")
                 .setIssuedAt(now) //创建时间
-                .setSubject(jsonBinder.toJson(map)) //主题，也差不多是个人的一些信息
+                .setSubject(name) //主题，也差不多是个人的一些信息
                 .setIssuer(issuer) //发送谁
                 .setAudience(audience) //个人签名
+                .setId(jti)
+                .claim("access", scopes)
                 .signWith(signatureAlgorithm, signingKey); //估计是第三段密钥
 
         //添加Token过期时间
