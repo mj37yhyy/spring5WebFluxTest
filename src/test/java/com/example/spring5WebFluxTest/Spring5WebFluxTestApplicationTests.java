@@ -11,7 +11,7 @@ public class Spring5WebFluxTestApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		System.out.println(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+		System.out.println(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'07:00")
 				.format(new Date()));
 	}
 

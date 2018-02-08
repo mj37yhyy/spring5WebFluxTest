@@ -101,7 +101,7 @@ public class TestController {
 						m.put("token", token);
 						m.put("expires_in", "300");
 						//RFC3339 格式
-						m.put("issued_at", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+						m.put("issued_at", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'07:00")
 								.format(new Date()));
 					}
 				}
