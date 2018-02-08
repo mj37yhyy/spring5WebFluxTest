@@ -25,7 +25,7 @@ public class TestController {
 			ServerHttpResponse response,
 			@RequestParam
 			String service,
-			@RequestParam
+			@RequestParam(required = false)
 			String scope,
 			@RequestParam(required = false)
 			String account) {
@@ -43,25 +43,24 @@ public class TestController {
 
 		System.out.println("-------------------------------------------");
 
-		String[] s = scope.split(":");
-		List<Scope> scopes = new ArrayList<Scope>() {
-			{
-				add(new Scope() {
-					{
-						setType(s[0]);
-						setName(s[1]);
-						setAction("pull");
-					}
-				});
-				add(new Scope() {
-					{
-						setType(s[0]);
-						setName(s[1]);
-						setAction("push");
-					}
-				});
-			}
-		};
+		List<Scope> scopes = new ArrayList<>();
+		if (scope != null) {
+			String[] s = scope.split(":");
+			scopes.add(new Scope() {
+				{
+					setType(s[0]);
+					setName(s[1]);
+					setAction("pull");
+				}
+			});
+			scopes.add(new Scope() {
+				{
+					setType(s[0]);
+					setName(s[1]);
+					setAction("push");
+				}
+			});
+		}
 
 		List<String> authorization = request.getHeaders().get("Authorization");
 
@@ -100,25 +99,25 @@ public class TestController {
 
 						m.put("token", token);
 						m.put("expires_in", "300");
-						//RFC3339 格式
-						m.put("issued_at", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-								.format(new Date()));
+						// RFC3339 格式
+						m.put("issued_at",
+								new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+										.format(new Date()));
 					}
 				}
 			});
 			return Mono.just(m);
 		}
 
-
 		HashMap m = new HashMap() {
 			{
 				put("errors", new ArrayList<Error>() {
 					{
 						add(new Error() {
-                            {
-                                setDetail(scopes);
-                            }
-                        });
+							{
+								setDetail(scopes);
+							}
+						});
 					}
 				});
 			}
@@ -126,8 +125,12 @@ public class TestController {
 		response.setStatusCode(HttpStatus.UNAUTHORIZED);
 		response.getHeaders().set("Www-Authenticate", "Bearer " +
 				"realm=\"http://localhost:8081/service/token\"," +
-				"service=\"" + service + "\"," +
-				"scope=\"" + s[0] + ":" + s[1] + ":pull,push" + "\"");
+				"service=\"" + service + "\","
+				+ (scope != null
+						? ("scope=\"" + scope.split(":")[0] + ":"
+								+ scope.split(":")[1])
+						: "")
+				+ ":pull,push" + "\"");
 		return Mono.just(m);
 
 	}
