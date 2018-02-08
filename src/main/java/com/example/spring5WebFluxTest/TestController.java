@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -99,7 +100,9 @@ public class TestController {
 
 						m.put("token", token);
 						m.put("expires_in", "300");
-						m.put("issued_at", new Date());
+						//RFC3339 格式
+						m.put("issued_at", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+								.format(new Date()));
 					}
 				}
 			});
